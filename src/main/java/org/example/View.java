@@ -1,6 +1,6 @@
 package org.example;
 
-// App View made with Java Swing library
+// App View made with Java Swing lib
 
 public class View {
 }
