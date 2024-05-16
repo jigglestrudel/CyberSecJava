@@ -18,10 +18,12 @@ public class OurWindow {
         menuBar.setBackground(new Color(255, 30, 150));
         menuBar.setPreferredSize(new Dimension(600, 40));
         // Create radio button menu items
-        JRadioButtonMenuItem button1 = new JRadioButtonMenuItem("Button1");
-        JRadioButtonMenuItem button2 = new JRadioButtonMenuItem("Button2");
+        JRadioButtonMenuItem button1 = new JRadioButtonMenuItem("Weryfikacja");
+        JRadioButtonMenuItem button2 = new JRadioButtonMenuItem("Podpisywanie");
         button1.setBackground(new Color(191, 8, 109));
         button2.setBackground(new Color(191, 8, 109));
+        button1.setForeground(new Color(255, 255, 255));
+        button2.setForeground(new Color(255, 255, 255));
         button1.setSize(100, 40);
         button2.setSize(100, 40);
 
