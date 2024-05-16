@@ -75,19 +75,27 @@ public class SignatureGenerator {
             byte[] signature = cipher.sign();
 
             //save the signature in a file
-            FileOutputStream fileSignature = new FileOutputStream("signature");
-            fileSignature.write(signature);
-            fileSignature.close();
-
-            // save the public key in a file
-            byte[] key = publicKey.getEncoded();
-            FileOutputStream fileKey = new FileOutputStream("publicKey");
-            fileKey.write(key);
-            fileKey.close();
+            saveDataToFiles(signature, publicKey,algorithm);
 
         } catch (Exception e) {
             System.err.println("Exception occured " + e.toString());
         }
+    }
+
+    private static void saveDataToFiles(byte[] signature, PublicKey publicKey, String algorithm) throws IOException {
+        FileOutputStream fileSignature = new FileOutputStream("signature");
+        fileSignature.write(signature);
+        fileSignature.close();
+
+        // save the public key in a file
+        byte[] key = publicKey.getEncoded();
+        FileOutputStream fileKey = new FileOutputStream("publicKey");
+        fileKey.write(key);
+        fileKey.close();
+
+        FileOutputStream fileAlgorithm = new FileOutputStream("algorithm");
+        fileAlgorithm.write(algorithm.getBytes());
+        fileAlgorithm.close();
     }
 
 }
