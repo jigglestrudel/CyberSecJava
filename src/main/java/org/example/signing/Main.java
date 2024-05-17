@@ -1,4 +1,6 @@
-package org.example;
+package org.example.signing;
+
+import org.example.signing.SignatureGenerator;
 
 public class Main {
     public static void main(String[] args) {
