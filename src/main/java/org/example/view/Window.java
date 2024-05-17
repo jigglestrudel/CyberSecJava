@@ -30,25 +30,6 @@ public class Window {
         tabPanel.addTab("Verification", panel1);
         tabPanel.addTab("Signing", panel2);
 
-//        JPanel cardPanel = new JPanel();
-//        CardLayout cardLayout = new CardLayout();
-//        cardPanel.setLayout(cardLayout);
-//
-//        JPanel panel1 = new JPanel();
-//        //panel1.add(new JLabel("This is Panel 1"));
-//        panel1.setBackground(new Color(255, 218, 232));
-//        panel1.setForeground(new Color(72, 10, 48));
-//        panel1.setBorder(new EmptyBorder(10, 10, 10, 10));
-//
-//        JPanel panel2 = new JPanel();
-//        panel2.add(new JLabel("This is Panel 2"));
-//        panel2.setBackground(new Color(255, 218, 232));
-//        panel2.setForeground(new Color(72, 10, 48));
-//        panel2.setBorder(new EmptyBorder(10, 10, 10, 10));
-//
-//        cardPanel.add(panel1, "panel1");
-//        cardPanel.add(panel2, "panel2");
-
         // PANEL 1
         JLabel fileLabel = new JLabel("Select a file:");
         JTextField selectedFilePathField = new JTextField(25);
@@ -116,7 +97,7 @@ public class Window {
         JTextField signatureField = new JTextField(25);
         JLabel publicKeyLabel = new JLabel("Public key name:");
         JTextField publicKeyField = new JTextField(25);
-        JCheckBox generatePrivateKey = new JCheckBox("Generate private key");
+        JCheckBox generatePrivateKey = new JCheckBox("Save private key?");
         generatePrivateKey.setBackground(new Color(255, 218, 232));
         JLabel privateKeyLabel = new JLabel("Private key name:");
         JTextField privateKeyField = new JTextField(25);
@@ -230,45 +211,6 @@ public class Window {
         gbc.fill = GridBagConstraints.NONE;
         panel2.add(signButton, gbc);
 
-        //frame.getContentPane().add(button);
-//        JMenuBar menuBar = new JMenuBar();
-//        menuBar.setOpaque(true);
-//        menuBar.setPreferredSize(new Dimension(600, 40));
-//
-//        // Create radio button menu items
-//        JRadioButtonMenuItem button1 = new JRadioButtonMenuItem("Verification", true);
-//        JRadioButtonMenuItem button2 = new JRadioButtonMenuItem("Signing");
-//        button1.setBackground(new Color(255, 50, 124));
-//        button2.setBackground(new Color(255, 50, 124));
-//        button1.setForeground(new Color(255, 255, 255));
-//        button2.setForeground(new Color(255, 255, 255));
-//
-//        ButtonGroup buttonGroup = new ButtonGroup();
-//        buttonGroup.add(button1);
-//        buttonGroup.add(button2);
-
-//        button1.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                System.out.println("Button1 clicked");
-//                cardLayout.show(cardPanel, "panel1");
-//            }
-//        });
-//
-//        button2.addActionListener(new ActionListener() {
-//            @Override
-//            public void actionPerformed(ActionEvent e) {
-//                System.out.println("Button2 clicked");
-//                cardLayout.show(cardPanel, "panel2");
-//            }
-//        });
-
-        // Add radio button menu items to the menu bar
-//        menuBar.add(button1);
-//        menuBar.add(button2);
-//
-//        frame.setJMenuBar(menuBar);
-        //frame.add(cardPanel);
         frame.add(tabPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
