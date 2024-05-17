@@ -2,8 +2,10 @@ package org.example.verification;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.*;
+import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 //źródło: https://docs.oracle.com/javase%2Ftutorial%2F/security/apisign/versig.html
@@ -11,21 +13,28 @@ import java.security.spec.X509EncodedKeySpec;
 public class Verifier {
     PublicKey publicKey;
     String signingAlgorithm;
-    String cypheringAlgorithm;
     String filePath;
     byte[] signatureToVerify;
 
+    public Verifier (String filePath, String signaturePath, X509Certificate certificate) throws IOException {
+        //verifier initialization using certificate, signature file and signed file passed by user
+        this.signingAlgorithm = certificate.getSigAlgName();
+        this.filePath = filePath;
+        this.signatureToVerify = readSignatureBytes(signaturePath);
+        this.publicKey = certificate.getPublicKey();
+    }
     public Verifier(String filePath, String signaturePath, String keyPath, String signingAlgorithmFile) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
         //verifier initialization using path to files passed by user
-        this.cypheringAlgorithm = Files.readString(Paths.get(signingAlgorithmFile));
-        this.signingAlgorithm = getAlgorithmName(Files.readString(Paths.get(signingAlgorithmFile)));
-        //this.signingAlgorithm = Files.readString(Paths.get(signingAlgorithmFile));
+        Path pathToAlgorithmFile = Paths.get(signingAlgorithmFile);
+        this.signingAlgorithm = getAlgorithmName(Files.readString(pathToAlgorithmFile));
         this.filePath = filePath;
+        this.signatureToVerify = readSignatureBytes(signaturePath);
+        //key encoding
+        String keyCypheringAlgorithm = Files.readString(pathToAlgorithmFile);
         byte[] encodedKey = readEncodedPublicKey(keyPath);
         X509EncodedKeySpec publicKeySpecification = new X509EncodedKeySpec(encodedKey);
-        KeyFactory keyFactory = KeyFactory.getInstance(cypheringAlgorithm);
+        KeyFactory keyFactory = KeyFactory.getInstance(keyCypheringAlgorithm);
         this.publicKey = keyFactory.generatePublic(publicKeySpecification);
-        this.signatureToVerify = readSignatureBytes(signaturePath);
     }
     static private String getAlgorithmName(String algorithm) throws NoSuchAlgorithmException {
         if (algorithm.equals("DSA")) {
