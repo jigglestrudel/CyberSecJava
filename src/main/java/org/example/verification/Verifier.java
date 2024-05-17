@@ -37,6 +37,7 @@ public class Verifier {
         this.publicKey = keyFactory.generatePublic(publicKeySpecification);
     }
     static private String getAlgorithmName(String algorithm) throws NoSuchAlgorithmException {
+        //gets name of algorithm used to sign file
         if (algorithm.equals("DSA")) {
             return "SHA1withDSA";
         }
