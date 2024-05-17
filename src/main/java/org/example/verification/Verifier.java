@@ -1,6 +1,8 @@
 package org.example.verification;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
@@ -14,9 +16,9 @@ public class Verifier {
     String filePath;
     byte[] signatureToVerify;
 
-    public Verifier(String filePath, String signaturePath, String keyPath, String signingAlgorithm) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
+    public Verifier(String filePath, String signaturePath, String keyPath, String signingAlgorithmFile) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
         //inicjalizacja weryfikatora podpisów dla podanych przez użytkownika plików
-        this.signingAlgorithm = signingAlgorithm;
+        this.signingAlgorithm = Files.readString(Paths.get(signingAlgorithmFile));
         this.filePath = filePath;
         byte[] encodedKey = readEncodedPublicKey(keyPath);
         X509EncodedKeySpec publicKeySpecification = new X509EncodedKeySpec(encodedKey);
@@ -26,7 +28,7 @@ public class Verifier {
         this.signatureToVerify = readSignatureBytes(signaturePath);
     }
     static private byte[] readEncodedPublicKey(String key_path) throws IOException {
-        //odczytujemy zaszyfrowany klucz zawarty w pliku o podanej ścieżce
+        //reads encrypted public key from file
         FileInputStream keyInputStream = new FileInputStream(key_path);
         byte[] encodedKey = new byte[keyInputStream.available()];
         keyInputStream.read(encodedKey);
@@ -34,7 +36,7 @@ public class Verifier {
         return encodedKey;
     }
     static private byte[] readSignatureBytes(String signaturePath) throws IOException {
-        //odczytujemy podpis cyfrowy zapisany w pliku o podanej ścieżce
+        //reads digital signature of file as bytes
         FileInputStream signatureFileInputStream = new FileInputStream(signaturePath);
         byte[] signatureToVerify = new byte[signatureFileInputStream.available()];
         signatureFileInputStream.read(signatureToVerify);
@@ -42,8 +44,7 @@ public class Verifier {
         return signatureToVerify;
     }
     public boolean verifySignature() throws NoSuchAlgorithmException, InvalidKeyException, IOException, SignatureException {
-        //weryfikujemy podpis cyfrowy pliku poprzez wygenerowanie nowego podpisu dla pliku i powrównanie
-        //go z podpisem odczytanym w pliku
+        //verifies digital signature of a file by generating new digital signature for file and comparing of keys
         Signature signature = Signature.getInstance(signingAlgorithm);
         signature.initVerify(publicKey);
         FileInputStream dataFileInputStream = new FileInputStream(filePath);
