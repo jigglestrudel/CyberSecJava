@@ -15,5 +15,18 @@ public class Main {
         catch (Exception e) {
             e.printStackTrace();
         }
+        //testing for RSA algorithm
+        try {
+            Verifier verifier = new Verifier("testFiles/RSA_test/test.txt", "testFiles/RSA_test/signature", "testFiles/RSA_test/publicKey", "testFiles/RSA_test/algorithm");
+            if (verifier.verifySignature()) {
+                System.out.println("Digital signature is valid");
+            }
+            else {
+                System.out.println("Digital signature is not valid");
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
