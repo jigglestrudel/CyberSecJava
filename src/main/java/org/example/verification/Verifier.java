@@ -11,18 +11,32 @@ import java.security.spec.X509EncodedKeySpec;
 public class Verifier {
     PublicKey publicKey;
     String signingAlgorithm;
+    String cypheringAlgorithm;
     String filePath;
     byte[] signatureToVerify;
 
     public Verifier(String filePath, String signaturePath, String keyPath, String signingAlgorithmFile) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
         //verifier initialization using path to files passed by user
-        this.signingAlgorithm = Files.readString(Paths.get(signingAlgorithmFile));
+        this.cypheringAlgorithm = Files.readString(Paths.get(signingAlgorithmFile));
+        this.signingAlgorithm = getAlgorithmName(Files.readString(Paths.get(signingAlgorithmFile)));
+        //this.signingAlgorithm = Files.readString(Paths.get(signingAlgorithmFile));
         this.filePath = filePath;
         byte[] encodedKey = readEncodedPublicKey(keyPath);
         X509EncodedKeySpec publicKeySpecification = new X509EncodedKeySpec(encodedKey);
-        KeyFactory keyFactory = KeyFactory.getInstance(signingAlgorithm);
+        KeyFactory keyFactory = KeyFactory.getInstance(cypheringAlgorithm);
         this.publicKey = keyFactory.generatePublic(publicKeySpecification);
         this.signatureToVerify = readSignatureBytes(signaturePath);
+    }
+    static private String getAlgorithmName(String algorithm) throws NoSuchAlgorithmException {
+        if (algorithm.equals("DSA")) {
+            return "SHA1withDSA";
+        }
+        else if (algorithm.equals("RSA")) {
+            return "SHA256withRSA";
+        }
+        else {
+            throw new NoSuchAlgorithmException();
+        }
     }
     static private byte[] readEncodedPublicKey(String key_path) throws IOException {
         //reads encrypted public key from file
