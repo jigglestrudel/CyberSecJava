@@ -9,21 +9,18 @@ import java.security.spec.X509EncodedKeySpec;
 //źródło: https://docs.oracle.com/javase%2Ftutorial%2F/security/apisign/versig.html
 
 public class Verifier {
-    //weryfikator musi sprawdzać podpis pliku na podstawie podanego klucza i algorytmu lub certyfikatu
-    //musimy wczytać plik z podpisem, plik, oraz pobrać informacje z certyfikatu lub odczytać klucz z pliku oraz użyty algorytm
     PublicKey publicKey;
     String signingAlgorithm;
     String filePath;
     byte[] signatureToVerify;
 
     public Verifier(String filePath, String signaturePath, String keyPath, String signingAlgorithmFile) throws NoSuchAlgorithmException, InvalidKeySpecException, IOException {
-        //inicjalizacja weryfikatora podpisów dla podanych przez użytkownika plików
+        //verifier initialization using path to files passed by user
         this.signingAlgorithm = Files.readString(Paths.get(signingAlgorithmFile));
         this.filePath = filePath;
         byte[] encodedKey = readEncodedPublicKey(keyPath);
         X509EncodedKeySpec publicKeySpecification = new X509EncodedKeySpec(encodedKey);
-        String algorithm = publicKeySpecification.getAlgorithm();
-        KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
+        KeyFactory keyFactory = KeyFactory.getInstance(signingAlgorithm);
         this.publicKey = keyFactory.generatePublic(publicKeySpecification);
         this.signatureToVerify = readSignatureBytes(signaturePath);
     }
