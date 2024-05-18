@@ -8,10 +8,15 @@ import java.security.spec.ECGenParameterSpec;
 public class SignatureGenerator {
     String path;
     String algorithm;
-
-    public SignatureGenerator(String path, String algorithm){
+    String publicKeyFileName;
+    String signatureFileName;
+    String privateKeyFileName;
+    public SignatureGenerator(String path, String algorithm, String signatureFileName,String privateKeyFileName, String publicKeyFileName){
         this.path=path;
         this.algorithm = algorithm;
+        this.signatureFileName = signatureFileName;
+        this.privateKeyFileName = privateKeyFileName;
+        this.publicKeyFileName = publicKeyFileName;
     }
 
     public String getHashFunction(String algorithm){
@@ -75,27 +80,34 @@ public class SignatureGenerator {
             byte[] signature = cipher.sign();
 
             //save the signature in a file
-            saveDataToFiles(signature, publicKey,algorithm);
+            saveDataToFiles(signature, publicKey, privateKey);
 
         } catch (Exception e) {
             System.err.println("Exception occured " + e.toString());
         }
     }
 
-    private static void saveDataToFiles(byte[] signature, PublicKey publicKey, String algorithm) throws IOException {
-        FileOutputStream fileSignature = new FileOutputStream("signature");
+    private void saveDataToFiles(byte[] signature, PublicKey publicKey, PrivateKey privateKey) throws IOException {
+        FileOutputStream fileSignature = new FileOutputStream(signatureFileName);
         fileSignature.write(signature);
         fileSignature.close();
 
         // save the public key in a file
         byte[] key = publicKey.getEncoded();
-        FileOutputStream fileKey = new FileOutputStream("publicKey");
+        FileOutputStream fileKey = new FileOutputStream(publicKeyFileName);
         fileKey.write(key);
         fileKey.close();
 
-        FileOutputStream fileAlgorithm = new FileOutputStream("algorithm");
-        fileAlgorithm.write(algorithm.getBytes());
-        fileAlgorithm.close();
+        if(privateKeyFileName!=null) {
+            byte[] priv = privateKey.getEncoded();
+            FileOutputStream privateFileKey = new FileOutputStream(privateKeyFileName);
+            privateFileKey.write(priv);
+            privateFileKey.close();
+        }
+//
+//        FileOutputStream fileAlgorithm = new FileOutputStream("algorithm");
+//        fileAlgorithm.write(algorithm.getBytes());
+//        fileAlgorithm.close();
     }
 
 }
