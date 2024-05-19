@@ -45,7 +45,6 @@ public class SignatureGenerator {
         return switch (algorithm) {
             case "DSA" -> "SHA1withDSA";
             case "RSA" -> "SHA256withRSA";
-            case "EC" -> "SHA256withRSA";
             default -> "error";
         };
     }
@@ -62,14 +61,12 @@ public class SignatureGenerator {
 
             //SecureRandom class provides a cryptographically strong random number generator
             //generowania kryptograficznie silnych liczb losowych
-            if(algorithm.equals("EC")){
-                AlgorithmParameterSpec ecKey =new ECGenParameterSpec("secp256r1");
-                keyGenerated.initialize(ecKey);
-            }
-            else {
-                SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
-                keyGenerated.initialize(1024, random);
-            }
+//            if(algorithm.equals("EC")){
+//                SecureRandom random = SecureRandom.getInstanceStrong(); // Użyj silnego generatora liczb losowych
+//                keyGenerated.initialize(new ECGenParameterSpec("secp256r1"), random);
+//            }
+            SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
+            keyGenerated.initialize(1024, random);
 
             //Generate the key pair and store the keys in PrivateKey and PublicKey objects.
             keyPair = keyGenerated.generateKeyPair();

@@ -15,8 +15,7 @@ public class Main {
         generatorPodpisow.generateSignature();
         System.out.println("DONE");
 
-        CertificateGenerator certificateGenerator=new CertificateGenerator(generatorPodpisow.getKeyPair(),generatorPodpisow.getSignature());
-        certificateGenerator.generateCertificate();
+        CertificateGenerator.generateCertificate();
         System.out.println("DONE");
 
 
