@@ -38,6 +38,13 @@ public class Window {
         browseButton.setBackground(new Color(255, 128, 174));
         browseButton.setForeground(Color.WHITE);
 
+        JLabel signatureLabel = new JLabel("Select a signature:");
+        JTextField signatureField = new JTextField(25);
+        signatureField.setEditable(false);
+        JButton signatureButton = new JButton("Browse");
+        signatureButton.setBackground(new Color(255, 128, 174));
+        signatureButton.setForeground(Color.WHITE);
+
         ButtonGroup bg = new ButtonGroup();
         JRadioButton publicKey = new JRadioButton("Public key");
         publicKey.setBackground(new Color(255, 218, 232));
@@ -134,69 +141,86 @@ public class Window {
         gbc.fill = GridBagConstraints.NONE;
         panel1.add(browseButton, gbc);
 
-        // 2 row: public key or certificate
+        // 2 row: file selection
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel1.add(signatureLabel, gbc);
         gbc.gridx = 1;
         gbc.gridy = 1;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(signatureField, gbc);
+        gbc.gridx = 3;
+        gbc.gridy = 1;
+        gbc.gridwidth = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        panel1.add(signatureButton, gbc);
+
+        // 3 row: public key or certificate
+        gbc.gridx = 1;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         panel1.add(publicKey, gbc);
         gbc.gridx = 2;
-        gbc.gridy = 1;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.EAST;
         panel1.add(certificate, gbc);
 
-        // 3 row: public key / certificate
+        // 4 row: public key / certificate
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
         panel1.add(publicKeyLabel, gbc);
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.NONE;
         panel1.add(publicKeyField, gbc);
 
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
         panel1.add(certificateLabel, gbc);
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(certificateField, gbc);
         gbc.gridx = 3;
-        gbc.gridy = 2;
+        gbc.gridy = 3;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(certificateButton, gbc);
 
-        // 4 row: algorithm selection
+        // 5 row: algorithm selection
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
         panel1.add(algLabel, gbc);
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
         panel1.add(algDSA, gbc);
         gbc.gridx = 2;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.CENTER;
         panel1.add(algRSA, gbc);
         gbc.gridx = 3;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.EAST;
         panel1.add(algEC, gbc);
 
-        // 5 row: verify button
+        // 6 row: verify button
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.NONE;
@@ -222,8 +246,8 @@ public class Window {
         bg3.add(algorithmRSA);
         bg3.add(algorithmEC);
 
-        JLabel signatureLabel = new JLabel("Signature name:");
-        JTextField signatureField = new JTextField(25);
+        JLabel signatureLabel2 = new JLabel("Signature name:");
+        JTextField signatureField2 = new JTextField(25);
         JLabel publicKeyLabel2 = new JLabel("Public key name:");
         JTextField publicKeyField2 = new JTextField(25);
         JCheckBox generatePrivateKey = new JCheckBox("Save private key?");
@@ -297,12 +321,12 @@ public class Window {
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
-        panel2.add(signatureLabel, gbc);
+        panel2.add(signatureLabel2, gbc);
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel2.add(signatureField, gbc);
+        panel2.add(signatureField2, gbc);
 
         // 4 row: public key name
         gbc.gridx = 0;
