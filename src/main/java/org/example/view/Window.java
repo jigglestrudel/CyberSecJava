@@ -122,6 +122,10 @@ public class Window {
             algEC.setVisible(false);
         });
 
+        verifyButton.addActionListener(e -> {
+
+        });
+
         gbc.insets = new Insets(10, 10, 10, 10);
 
         // 1 row: file selection
@@ -281,6 +285,10 @@ public class Window {
             }
         });
 
+        signButton.addActionListener(e -> {
+
+        });
+
         gbc.insets = new Insets(10, 10, 10, 10);
 
         // 1 row: file selection
@@ -369,6 +377,5 @@ public class Window {
 
         frame.setSize(600, 500);
         frame.setVisible(true);
-
     }
 }
