@@ -28,18 +28,5 @@ public class Main {
         catch (Exception e) {
             e.printStackTrace();
         }
-        //testing for getting data from certificate
-        /*try {
-            Verifier verifier = new Verifier();
-            if (verifier.verifySignature()) {
-                System.out.println("Digital signature is valid");
-            }
-            else {
-                System.out.println("Digital signature is not valid");
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }*/
     }
 }
