@@ -6,16 +6,11 @@ import java.security.spec.ECGenParameterSpec;
 
 //https://docs.oracle.com/javase%2Ftutorial%2F/security/apisign/gensig.html
 public class SignatureGenerator {
-    private String path;
-    private String algorithm;
-    private PrivateKey privateKey;
-    private PublicKey publicKey;
-    private KeyPair keyPair;
-
-    private Signature cipher;
-    private String publicKeyFileName;
-    private String signatureFileName;
-    private String privateKeyFileName;
+    private final String path;
+    private final String algorithm;
+    private final String publicKeyFileName;
+    private final String signatureFileName;
+    private final String privateKeyFileName;
     public SignatureGenerator(String path, String algorithm, String signatureFileName,String privateKeyFileName, String publicKeyFileName){
         this.path=path;
         this.algorithm = algorithm;
@@ -23,22 +18,6 @@ public class SignatureGenerator {
         this.privateKeyFileName = privateKeyFileName;
         this.publicKeyFileName = publicKeyFileName;
     }
-
-    public PrivateKey getPrivateKey(){
-        return privateKey;
-    }
-    public PublicKey getPublicKey(){
-        return publicKey;
-    }
-
-    public KeyPair getKeyPair(){
-        return keyPair;
-    }
-
-    public Signature getSignature(){
-        return cipher;
-    }
-
     public String getHashFunction(String algorithm){
         //algorytmy podpisu cyfrowego łączą funkcję skrótu z algorytmem podpisu.
         // Różne algorytmy podpisu wymagają różnych kombinacji funkcji skrótu i algorytmu podpisu
@@ -69,14 +48,14 @@ public class SignatureGenerator {
             keyGenerated.initialize(1024, random);
 
             //Generate the key pair and store the keys in PrivateKey and PublicKey objects.
-            keyPair = keyGenerated.generateKeyPair();
-            privateKey = keyPair.getPrivate();
-            publicKey = keyPair.getPublic();
+            KeyPair keyPair = keyGenerated.generateKeyPair();
+            PrivateKey privateKey = keyPair.getPrivate();
+            PublicKey publicKey = keyPair.getPublic();
 
             //A digital signature is created (or verified) using an instance of the Signature class
             String hashFunction = getHashFunction(algorithm);
             //Get a Signature object for generating or verifying signatures using the DSA algorithm
-            cipher = Signature.getInstance(hashFunction);
+            Signature cipher = Signature.getInstance(hashFunction);
             cipher.initSign(privateKey);
 
             //read in the data a buffer at a time and supply it to the Signature object by update method

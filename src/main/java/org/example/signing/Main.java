@@ -15,9 +15,6 @@ public class Main {
         generatorPodpisow.generateSignature();
         System.out.println("DONE");
 
-        CertificateGenerator.generateCertificate();
-        System.out.println("DONE");
-
 
     }
 }
