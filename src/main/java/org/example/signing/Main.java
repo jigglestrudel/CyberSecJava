@@ -4,7 +4,7 @@ import org.example.signing.SignatureGenerator;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        String path ="C:\\Users\\DELL\\Desktop\\wera.txt";
+        String path ="C:\\Users\\kules\\Desktop\\studia\\semestr IV\\aga.txt";
         String algorithm = "RSA";
         String signatureFileName = "signature";
         String publicKeyFileName = "publicKey";
