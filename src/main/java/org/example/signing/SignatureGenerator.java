@@ -1,8 +1,6 @@
 package org.example.signing;
 import java.io.*;
 import java.security.*;
-import java.security.spec.AlgorithmParameterSpec;
-import java.security.spec.ECGenParameterSpec;
 
 //https://docs.oracle.com/javase%2Ftutorial%2F/security/apisign/gensig.html
 public class SignatureGenerator {
@@ -65,7 +63,7 @@ public class SignatureGenerator {
             int length;
             while ((length = inputStrem.read(buffer)) >= 0) {
                 cipher.update(buffer, 0, length);
-            };
+            }
             inputStrem.close();
 
             //generate the digital signature of that data
@@ -75,7 +73,7 @@ public class SignatureGenerator {
             saveDataToFiles(signature, publicKey, privateKey);
 
         } catch (Exception e) {
-            System.err.println("Exception occured " + e.toString());
+            System.err.println("Exception occured " + e);
         }
     }
 
@@ -90,7 +88,7 @@ public class SignatureGenerator {
         fileKey.write(key);
         fileKey.close();
 
-        if(privateKeyFileName!=null) {
+        if(privateKeyFileName != null && !privateKeyFileName.isEmpty()) {
             byte[] priv = privateKey.getEncoded();
             FileOutputStream privateFileKey = new FileOutputStream(privateKeyFileName);
             privateFileKey.write(priv);
