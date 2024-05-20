@@ -1,6 +1,8 @@
 package org.example.view;
 
 import org.example.signing.SignatureGenerator;
+import org.example.verification.Verifier;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -33,40 +35,40 @@ public class Window {
 
         // PANEL 1
         JLabel fileLabel = new JLabel("Select a file:");
-        JTextField selectedFilePathField = new JTextField(25);
-        selectedFilePathField.setEditable(false);
-        JButton browseButton = new JButton("Browse");
-        browseButton.setBackground(new Color(255, 128, 174));
-        browseButton.setForeground(Color.WHITE);
+        JTextField filePath = new JTextField(25);
+        filePath.setEditable(false);
+        JButton fileButton = new JButton("Browse");
+        fileButton.setBackground(new Color(255, 128, 174));
+        fileButton.setForeground(Color.WHITE);
 
         JLabel signatureLabel = new JLabel("Select a signature:");
-        JTextField signatureField = new JTextField(25);
-        signatureField.setEditable(false);
+        JTextField signaturePath = new JTextField(25);
+        signaturePath.setEditable(false);
         JButton signatureButton = new JButton("Browse");
         signatureButton.setBackground(new Color(255, 128, 174));
         signatureButton.setForeground(Color.WHITE);
 
         JLabel publicKeyLabel = new JLabel("Select public key:");
-        JTextField publicKeyField = new JTextField(25);
-        publicKeyField.setEditable(false);
+        JTextField publicKeyPath = new JTextField(25);
+        publicKeyPath.setEditable(false);
         JButton publicKeyButton = new JButton("Browse");
         publicKeyButton.setBackground(new Color(255, 128, 174));
         publicKeyButton.setForeground(Color.WHITE);
 
-        JLabel algLabel = new JLabel("Choose a signing algorithm:");
+        JLabel algorithmLabel = new JLabel("Choose a signing algorithm:");
         ButtonGroup bg = new ButtonGroup();
-        JRadioButton algDSA = new JRadioButton("DSA");
-        algDSA.setBackground(new Color(255, 218, 232));
-        JRadioButton algRSA = new JRadioButton("RSA");
-        algRSA.setBackground(new Color(255, 218, 232));
-        bg.add(algDSA);
-        bg.add(algRSA);
+        JRadioButton algorithmDSA = new JRadioButton("DSA");
+        algorithmDSA.setBackground(new Color(255, 218, 232));
+        JRadioButton algorithmRSA = new JRadioButton("RSA");
+        algorithmRSA.setBackground(new Color(255, 218, 232));
+        bg.add(algorithmDSA);
+        bg.add(algorithmRSA);
 
         JButton verifyButton = new JButton("Verify");
         verifyButton.setBackground(new Color(255, 128, 174));
         verifyButton.setForeground(Color.WHITE);
 
-        browseButton.addActionListener(e -> {
+        fileButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
 
             // Set the current directory to the project directory
@@ -76,7 +78,7 @@ public class Window {
             int returnValue = fileChooser.showOpenDialog(frame);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                selectedFilePathField.setText(selectedFile.getAbsolutePath());
+                filePath.setText(selectedFile.getAbsolutePath());
             }
         });
 
@@ -90,7 +92,7 @@ public class Window {
             int returnValue = fileChooser.showOpenDialog(frame);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                signatureField.setText(selectedFile.getAbsolutePath());
+                signaturePath.setText(selectedFile.getAbsolutePath());
             }
         });
 
@@ -104,12 +106,25 @@ public class Window {
             int returnValue = fileChooser.showOpenDialog(frame);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                publicKeyField.setText(selectedFile.getAbsolutePath());
+                publicKeyPath.setText(selectedFile.getAbsolutePath());
             }
         });
 
         verifyButton.addActionListener(e -> {
-
+            String algorithm = "";
+            if (algorithmDSA.isSelected()) {
+                algorithm = algorithmDSA.getText();
+            }
+            else if (algorithmRSA.isSelected()) {
+                algorithm = algorithmRSA.getText();
+            }
+            Verifier verifier = new Verifier( filePath.getText(), signaturePath.getText(), publicKeyPath.getText(), algorithm);
+            if (verifier.verifySignature()) {
+                JOptionPane.showMessageDialog(frame, "Digital signature is valid", "Verification Result", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else {
+                JOptionPane.showMessageDialog(frame, "Digital signature is not valid", "Verification Result", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -124,12 +139,12 @@ public class Window {
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(selectedFilePathField, gbc);
+        panel1.add(filePath, gbc);
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
-        panel1.add(browseButton, gbc);
+        panel1.add(fileButton, gbc);
 
         // 2 row: file selection
         gbc.gridx = 0;
@@ -141,7 +156,7 @@ public class Window {
         gbc.gridy = 1;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(signatureField, gbc);
+        panel1.add(signaturePath, gbc);
         gbc.gridx = 3;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
@@ -158,7 +173,7 @@ public class Window {
         gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(publicKeyField, gbc);
+        panel1.add(publicKeyPath, gbc);
         gbc.gridx = 3;
         gbc.gridy = 2;
         gbc.gridwidth = 1;
@@ -169,15 +184,15 @@ public class Window {
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.WEST;
-        panel1.add(algLabel, gbc);
+        panel1.add(algorithmLabel, gbc);
         gbc.gridx = 2;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.WEST;
-        panel1.add(algDSA, gbc);
+        panel1.add(algorithmDSA, gbc);
         gbc.gridx = 2;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.CENTER;
-        panel1.add(algRSA, gbc);
+        panel1.add(algorithmRSA, gbc);
 
         // 5 row: verify button
         gbc.gridx = 0;
@@ -189,37 +204,37 @@ public class Window {
 
         // PANEL 2
         JLabel fileLabel2 = new JLabel("Select a file:");
-        JTextField selectedFilePathField2 = new JTextField(25);
-        selectedFilePathField2.setEditable(false);
-        JButton browseButton2 = new JButton("Browse");
-        browseButton2.setBackground(new Color(255, 128, 174));
-        browseButton2.setForeground(Color.WHITE);
+        JTextField filePath2 = new JTextField(25);
+        filePath2.setEditable(false);
+        JButton fileButton2 = new JButton("Browse");
+        fileButton2.setBackground(new Color(255, 128, 174));
+        fileButton2.setForeground(Color.WHITE);
 
-        JLabel algorithmLabel = new JLabel("Choose a signing algorithm:");
+        JLabel algorithmLabel2 = new JLabel("Choose a signing algorithm:");
         ButtonGroup bg2 = new ButtonGroup();
-        JRadioButton algorithmDSA = new JRadioButton("DSA");
-        algorithmDSA.setBackground(new Color(255, 218, 232));
-        JRadioButton algorithmRSA = new JRadioButton("RSA");
-        algorithmRSA.setBackground(new Color(255, 218, 232));
-        bg2.add(algorithmDSA);
-        bg2.add(algorithmRSA);
+        JRadioButton algorithmDSA2 = new JRadioButton("DSA");
+        algorithmDSA2.setBackground(new Color(255, 218, 232));
+        JRadioButton algorithmRSA2 = new JRadioButton("RSA");
+        algorithmRSA2.setBackground(new Color(255, 218, 232));
+        bg2.add(algorithmDSA2);
+        bg2.add(algorithmRSA2);
 
         JLabel signatureLabel2 = new JLabel("Signature file name:");
-        JTextField signatureField2 = new JTextField(25);
+        JTextField signaturePath2 = new JTextField(25);
         JLabel publicKeyLabel2 = new JLabel("Public key file name:");
-        JTextField publicKeyField2 = new JTextField(25);
+        JTextField publicKeyPath2 = new JTextField(25);
         JCheckBox generatePrivateKey = new JCheckBox("Save private key?");
         generatePrivateKey.setBackground(new Color(255, 218, 232));
         JLabel privateKeyLabel = new JLabel("Private key file name:");
-        JTextField privateKeyField = new JTextField(25);
+        JTextField privateKeyPath = new JTextField(25);
         privateKeyLabel.setVisible(false);
-        privateKeyField.setVisible(false);
+        privateKeyPath.setVisible(false);
 
         JButton signButton = new JButton("Sign");
         signButton.setBackground(new Color(255, 128, 174));
         signButton.setForeground(Color.WHITE);
 
-        browseButton2.addActionListener(e -> {
+        fileButton2.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
 
             // Set the current directory to the project directory
@@ -229,31 +244,36 @@ public class Window {
             int returnValue = fileChooser.showOpenDialog(frame);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                selectedFilePathField2.setText(selectedFile.getAbsolutePath());
+                filePath2.setText(selectedFile.getAbsolutePath());
             }
         });
 
         generatePrivateKey.addActionListener(e -> {
             if (generatePrivateKey.isSelected()) {
                 privateKeyLabel.setVisible(true);
-                privateKeyField.setVisible(true);
+                privateKeyPath.setVisible(true);
             }
             else {
                 privateKeyLabel.setVisible(false);
-                privateKeyField.setVisible(false);
+                privateKeyPath.setVisible(false);
             }
         });
 
         signButton.addActionListener(e -> {
-            String algoritm = "";
-            if (algorithmDSA.isSelected()) {
-                algoritm = algorithmDSA.getText();
+            String algorithm = "";
+            if (algorithmDSA2.isSelected()) {
+                algorithm = algorithmDSA2.getText();
             }
-            else if (algorithmRSA.isSelected()) {
-                algoritm = algorithmRSA.getText();
+            else if (algorithmRSA2.isSelected()) {
+                algorithm = algorithmRSA2.getText();
             }
-            SignatureGenerator signatureGenerator = new SignatureGenerator(selectedFilePathField2.getText(), algoritm, signatureField2.getText(), privateKeyField.getText(), publicKeyField2.getText());
-            signatureGenerator.generateSignature();
+            SignatureGenerator signatureGenerator = new SignatureGenerator(filePath2.getText(), algorithm, signaturePath2.getText(), privateKeyPath.getText(), publicKeyPath2.getText());
+            if ( signatureGenerator.generateSignature()) {
+                JOptionPane.showMessageDialog(frame, "Digital Signature created successfully", "Signing Result", JOptionPane.INFORMATION_MESSAGE);
+            }
+            else {
+                JOptionPane.showMessageDialog(frame, "Digital Signature creation unsuccessful", "Signing Result", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         gbc.insets = new Insets(10, 10, 10, 10);
@@ -267,26 +287,26 @@ public class Window {
         gbc.gridy = 0;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel2.add(selectedFilePathField2, gbc);
+        panel2.add(filePath2, gbc);
         gbc.gridx = 3;
         gbc.gridy = 0;
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
-        panel2.add(browseButton2, gbc);
+        panel2.add(fileButton2, gbc);
 
         // 2 row: algorithm selection
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        panel2.add(algorithmLabel, gbc);
+        panel2.add(algorithmLabel2, gbc);
         gbc.gridx = 2;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
-        panel2.add(algorithmDSA, gbc);
+        panel2.add(algorithmDSA2, gbc);
         gbc.gridx = 2;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.CENTER;
-        panel2.add(algorithmRSA, gbc);
+        panel2.add(algorithmRSA2, gbc);
 
         // 3 row: signature name
         gbc.gridx = 0;
@@ -297,7 +317,7 @@ public class Window {
         gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel2.add(signatureField2, gbc);
+        panel2.add(signaturePath2, gbc);
 
         // 4 row: public key name
         gbc.gridx = 0;
@@ -308,7 +328,7 @@ public class Window {
         gbc.gridy = 3;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel2.add(publicKeyField2, gbc);
+        panel2.add(publicKeyPath2, gbc);
 
         // 5 row: generate private key checkbox
         gbc.gridx = 0;
@@ -325,7 +345,7 @@ public class Window {
         gbc.gridy = 5;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel2.add(privateKeyField, gbc);
+        panel2.add(privateKeyPath, gbc);
 
         // 7 row: sign button
         gbc.gridx = 0;
