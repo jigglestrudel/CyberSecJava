@@ -80,20 +80,6 @@ public class Window {
             }
         });
 
-        publicKeyButton.addActionListener(e -> {
-            JFileChooser fileChooser = new JFileChooser();
-
-            // Set the current directory to the project directory
-            File projectDirectory = new File(System.getProperty("user.dir"));
-            fileChooser.setCurrentDirectory(projectDirectory);
-
-            int returnValue = fileChooser.showOpenDialog(frame);
-            if (returnValue == JFileChooser.APPROVE_OPTION) {
-                File selectedFile = fileChooser.getSelectedFile();
-                selectedFilePathField.setText(selectedFile.getAbsolutePath());
-            }
-        });
-
         signatureButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
 
@@ -104,7 +90,21 @@ public class Window {
             int returnValue = fileChooser.showOpenDialog(frame);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                selectedFilePathField.setText(selectedFile.getAbsolutePath());
+                signatureField.setText(selectedFile.getAbsolutePath());
+            }
+        });
+
+        publicKeyButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+
+            // Set the current directory to the project directory
+            File projectDirectory = new File(System.getProperty("user.dir"));
+            fileChooser.setCurrentDirectory(projectDirectory);
+
+            int returnValue = fileChooser.showOpenDialog(frame);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                publicKeyField.setText(selectedFile.getAbsolutePath());
             }
         });
 
