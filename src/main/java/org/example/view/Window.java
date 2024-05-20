@@ -1,5 +1,6 @@
 package org.example.view;
 
+import org.example.signing.SignatureGenerator;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -67,6 +68,39 @@ public class Window {
 
         browseButton.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
+
+            // Set the current directory to the project directory
+            File projectDirectory = new File(System.getProperty("user.dir"));
+            fileChooser.setCurrentDirectory(projectDirectory);
+
+            int returnValue = fileChooser.showOpenDialog(frame);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                selectedFilePathField.setText(selectedFile.getAbsolutePath());
+            }
+        });
+
+        publicKeyButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+
+            // Set the current directory to the project directory
+            File projectDirectory = new File(System.getProperty("user.dir"));
+            fileChooser.setCurrentDirectory(projectDirectory);
+
+            int returnValue = fileChooser.showOpenDialog(frame);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                selectedFilePathField.setText(selectedFile.getAbsolutePath());
+            }
+        });
+
+        signatureButton.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+
+            // Set the current directory to the project directory
+            File projectDirectory = new File(System.getProperty("user.dir"));
+            fileChooser.setCurrentDirectory(projectDirectory);
+
             int returnValue = fileChooser.showOpenDialog(frame);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
@@ -187,10 +221,15 @@ public class Window {
 
         browseButton2.addActionListener(e -> {
             JFileChooser fileChooser = new JFileChooser();
+
+            // Set the current directory to the project directory
+            File projectDirectory = new File(System.getProperty("user.dir"));
+            fileChooser.setCurrentDirectory(projectDirectory);
+
             int returnValue = fileChooser.showOpenDialog(frame);
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
-                selectedFilePathField.setText(selectedFile.getAbsolutePath());
+                selectedFilePathField2.setText(selectedFile.getAbsolutePath());
             }
         });
 
@@ -206,7 +245,21 @@ public class Window {
         });
 
         signButton.addActionListener(e -> {
+            System.out.println(selectedFilePathField2.getText());
+            System.out.println(signatureField2.getText());
+            System.out.println(privateKeyField.getText());
+            System.out.println(publicKeyField2.getText());
 
+            String algoritm = "";
+            if (algorithmDSA.isSelected()) {
+                algoritm = algorithmDSA.getText();
+            }
+            else if (algorithmRSA.isSelected()) {
+                algoritm = algorithmRSA.getText();
+            }
+            System.out.println(algoritm);
+            SignatureGenerator signatureGenerator = new SignatureGenerator(selectedFilePathField2.getText(), algoritm, signatureField2.getName(), privateKeyField.getText(), publicKeyField2.getText());
+            signatureGenerator.generateSignature();
         });
 
         gbc.insets = new Insets(10, 10, 10, 10);
