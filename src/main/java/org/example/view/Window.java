@@ -45,43 +45,21 @@ public class Window {
         signatureButton.setBackground(new Color(255, 128, 174));
         signatureButton.setForeground(Color.WHITE);
 
-        ButtonGroup bg = new ButtonGroup();
-        JRadioButton publicKey = new JRadioButton("Public key");
-        publicKey.setBackground(new Color(255, 218, 232));
-        JRadioButton certificate = new JRadioButton("Certificate");
-        certificate.setBackground(new Color(255, 218, 232));
-        bg.add(publicKey);
-        bg.add(certificate);
-
-        JLabel publicKeyLabel = new JLabel("Public key:");
+        JLabel publicKeyLabel = new JLabel("Select public key:");
         JTextField publicKeyField = new JTextField(25);
-        publicKeyLabel.setVisible(false);
-        publicKeyField.setVisible(false);
+        publicKeyField.setEditable(false);
+        JButton publicKeyButton = new JButton("Browse");
+        publicKeyButton.setBackground(new Color(255, 128, 174));
+        publicKeyButton.setForeground(Color.WHITE);
+
         JLabel algLabel = new JLabel("Choose a signing algorithm:");
-        ButtonGroup bg2 = new ButtonGroup();
+        ButtonGroup bg = new ButtonGroup();
         JRadioButton algDSA = new JRadioButton("DSA");
         algDSA.setBackground(new Color(255, 218, 232));
         JRadioButton algRSA = new JRadioButton("RSA");
         algRSA.setBackground(new Color(255, 218, 232));
-        JRadioButton algEC = new JRadioButton("EC");
-        algEC.setBackground(new Color(255, 218, 232));
-        bg2.add(algDSA);
-        bg2.add(algRSA);
-        bg2.add(algEC);
-        algLabel.setVisible(false);
-        algDSA.setVisible(false);
-        algRSA.setVisible(false);
-        algEC.setVisible(false);
-
-        JLabel certificateLabel = new JLabel("Choose a certificate:");
-        JTextField certificateField = new JTextField(25);
-        certificateField.setEditable(false);
-        JButton certificateButton = new JButton("Browse");
-        certificateButton.setBackground(new Color(255, 128, 174));
-        certificateButton.setForeground(Color.WHITE);
-        certificateLabel.setVisible(false);
-        certificateField.setVisible(false);
-        certificateButton.setVisible(false);
+        bg.add(algDSA);
+        bg.add(algRSA);
 
         JButton verifyButton = new JButton("Verify");
         verifyButton.setBackground(new Color(255, 128, 174));
@@ -94,32 +72,6 @@ public class Window {
                 File selectedFile = fileChooser.getSelectedFile();
                 selectedFilePathField.setText(selectedFile.getAbsolutePath());
             }
-        });
-
-        publicKey.addActionListener(e -> {
-            publicKeyLabel.setVisible(true);
-            publicKeyField.setVisible(true);
-            algLabel.setVisible(true);
-            algDSA.setVisible(true);
-            algRSA.setVisible(true);
-            algEC.setVisible(true);
-
-            certificateLabel.setVisible(false);
-            certificateField.setVisible(false);
-            certificateButton.setVisible(false);
-        });
-
-        certificate.addActionListener(e -> {
-            certificateLabel.setVisible(true);
-            certificateField.setVisible(true);
-            certificateButton.setVisible(true);
-
-            publicKeyLabel.setVisible(false);
-            publicKeyField.setVisible(false);
-            algLabel.setVisible(false);
-            algDSA.setVisible(false);
-            algRSA.setVisible(false);
-            algEC.setVisible(false);
         });
 
         verifyButton.addActionListener(e -> {
@@ -162,69 +114,40 @@ public class Window {
         gbc.fill = GridBagConstraints.NONE;
         panel1.add(signatureButton, gbc);
 
-        // 3 row: public key or certificate
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        panel1.add(publicKey, gbc);
-        gbc.gridx = 2;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.EAST;
-        panel1.add(certificate, gbc);
-
-        // 4 row: public key / certificate
+        // 3 row: public key
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
         panel1.add(publicKeyLabel, gbc);
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.NONE;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(publicKeyField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.WEST;
-        panel1.add(certificateLabel, gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(certificateField, gbc);
         gbc.gridx = 3;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         gbc.gridwidth = 1;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel1.add(certificateButton, gbc);
+        gbc.fill = GridBagConstraints.NONE;
+        panel1.add(publicKeyButton, gbc);
 
-        // 5 row: algorithm selection
+        // 4 row: algorithm selection
         gbc.gridx = 0;
-        gbc.gridy = 4;
-        gbc.gridwidth = 1;
+        gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.WEST;
         panel1.add(algLabel, gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        gbc.gridwidth = 1;
+        gbc.gridx = 2;
+        gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.WEST;
         panel1.add(algDSA, gbc);
         gbc.gridx = 2;
-        gbc.gridy = 4;
-        gbc.gridwidth = 1;
+        gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.CENTER;
         panel1.add(algRSA, gbc);
-        gbc.gridx = 3;
-        gbc.gridy = 4;
-        gbc.gridwidth = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        panel1.add(algEC, gbc);
 
-        // 6 row: verify button
+        // 5 row: verify button
         gbc.gridx = 0;
-        gbc.gridy = 5;
+        gbc.gridy = 4;
         gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.NONE;
@@ -239,24 +162,21 @@ public class Window {
         browseButton2.setForeground(Color.WHITE);
 
         JLabel algorithmLabel = new JLabel("Choose a signing algorithm:");
-        ButtonGroup bg3 = new ButtonGroup();
+        ButtonGroup bg2 = new ButtonGroup();
         JRadioButton algorithmDSA = new JRadioButton("DSA");
         algorithmDSA.setBackground(new Color(255, 218, 232));
         JRadioButton algorithmRSA = new JRadioButton("RSA");
         algorithmRSA.setBackground(new Color(255, 218, 232));
-        JRadioButton algorithmEC = new JRadioButton("EC");
-        algorithmEC.setBackground(new Color(255, 218, 232));
-        bg3.add(algorithmDSA);
-        bg3.add(algorithmRSA);
-        bg3.add(algorithmEC);
+        bg2.add(algorithmDSA);
+        bg2.add(algorithmRSA);
 
-        JLabel signatureLabel2 = new JLabel("Signature name:");
+        JLabel signatureLabel2 = new JLabel("Signature file name:");
         JTextField signatureField2 = new JTextField(25);
-        JLabel publicKeyLabel2 = new JLabel("Public key name:");
+        JLabel publicKeyLabel2 = new JLabel("Public key file name:");
         JTextField publicKeyField2 = new JTextField(25);
         JCheckBox generatePrivateKey = new JCheckBox("Save private key?");
         generatePrivateKey.setBackground(new Color(255, 218, 232));
-        JLabel privateKeyLabel = new JLabel("Private key name:");
+        JLabel privateKeyLabel = new JLabel("Private key file name:");
         JTextField privateKeyField = new JTextField(25);
         privateKeyLabel.setVisible(false);
         privateKeyField.setVisible(false);
@@ -320,10 +240,6 @@ public class Window {
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.CENTER;
         panel2.add(algorithmRSA, gbc);
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        panel2.add(algorithmEC, gbc);
 
         // 3 row: signature name
         gbc.gridx = 0;
