@@ -1,11 +1,7 @@
 package org.example.verification;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.*;
-import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 //źródło: https://docs.oracle.com/javase%2Ftutorial%2F/security/apisign/versig.html
@@ -16,24 +12,22 @@ public class Verifier {
     String filePath;
     byte[] signatureToVerify;
 
-    public Verifier(String filePath, String signaturePath, String keyPath, String signingAlgorithmFile) {
+    public Verifier(String filePath, String signaturePath, String keyPath, String algorithm) {
         //verifier initialization using path to files passed by user
         try {
-            Path pathToAlgorithmFile = Paths.get(signingAlgorithmFile);
-            this.signingAlgorithm = getAlgorithmName(Files.readString(pathToAlgorithmFile));
+            this.signingAlgorithm = getAlgorithmName(algorithm);
             this.filePath = filePath;
             this.signatureToVerify = readSignatureBytes(signaturePath);
             //key encoding
-            String keyCypheringAlgorithm = Files.readString(pathToAlgorithmFile);
             byte[] encodedKey = readEncodedPublicKey(keyPath);
             if (encodedKey == null) {
                 return;
             }
             X509EncodedKeySpec publicKeySpecification = new X509EncodedKeySpec(encodedKey);
-            KeyFactory keyFactory = KeyFactory.getInstance(keyCypheringAlgorithm);
+            KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
             this.publicKey = keyFactory.generatePublic(publicKeySpecification);
         }
-        catch (IOException | NoSuchAlgorithmException |InvalidKeySpecException e) {
+        catch (NoSuchAlgorithmException |InvalidKeySpecException e) {
             System.out.println("An exception occured in creating verifier");
         }
 
