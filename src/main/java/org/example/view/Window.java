@@ -167,11 +167,8 @@ public class Window {
         algorithmDSA.setBackground(new Color(255, 218, 232));
         JRadioButton algorithmRSA = new JRadioButton("RSA");
         algorithmRSA.setBackground(new Color(255, 218, 232));
-        JRadioButton algorithmEC = new JRadioButton("EC");
-        algorithmEC.setBackground(new Color(255, 218, 232));
         bg2.add(algorithmDSA);
         bg2.add(algorithmRSA);
-        bg2.add(algorithmEC);
 
         JLabel signatureLabel2 = new JLabel("Signature file name:");
         JTextField signatureField2 = new JTextField(25);
@@ -243,10 +240,6 @@ public class Window {
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.CENTER;
         panel2.add(algorithmRSA, gbc);
-        gbc.gridx = 2;
-        gbc.gridy = 1;
-        gbc.anchor = GridBagConstraints.EAST;
-        panel2.add(algorithmEC, gbc);
 
         // 3 row: signature name
         gbc.gridx = 0;
