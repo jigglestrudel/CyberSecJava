@@ -12,7 +12,7 @@ public class Main {
 
         System.out.println("Hello world!");
         SignatureGenerator generatorPodpisow = new SignatureGenerator(path, algorithm,signatureFileName,privateKeyFileName, publicKeyFileName );
-        generatorPodpisow.generateSignature();
+        boolean didItWorked = generatorPodpisow.generateSignature();
         System.out.println("DONE");
 
 
