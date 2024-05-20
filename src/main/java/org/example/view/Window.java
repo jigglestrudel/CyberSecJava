@@ -358,7 +358,7 @@ public class Window {
         frame.add(tabPanel);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        frame.setSize(600, 500);
+        frame.setSize(650, 500);
         frame.setVisible(true);
     }
 }
