@@ -245,11 +245,6 @@ public class Window {
         });
 
         signButton.addActionListener(e -> {
-            System.out.println(selectedFilePathField2.getText());
-            System.out.println(signatureField2.getText());
-            System.out.println(privateKeyField.getText());
-            System.out.println(publicKeyField2.getText());
-
             String algoritm = "";
             if (algorithmDSA.isSelected()) {
                 algoritm = algorithmDSA.getText();
@@ -257,8 +252,7 @@ public class Window {
             else if (algorithmRSA.isSelected()) {
                 algoritm = algorithmRSA.getText();
             }
-            System.out.println(algoritm);
-            SignatureGenerator signatureGenerator = new SignatureGenerator(selectedFilePathField2.getText(), algoritm, signatureField2.getName(), privateKeyField.getText(), publicKeyField2.getText());
+            SignatureGenerator signatureGenerator = new SignatureGenerator(selectedFilePathField2.getText(), algoritm, signatureField2.getText(), privateKeyField.getText(), publicKeyField2.getText());
             signatureGenerator.generateSignature();
         });
 
