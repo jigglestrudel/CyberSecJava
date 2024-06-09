@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 
 // color palette
 // https://lospec.com/palette-list/5-sheep
@@ -53,22 +54,6 @@ public class Window {
         JTextField signingUser = new JTextField(25);
         signingUser.setEditable(false);
 
-//        JLabel publicKeyLabel = new JLabel("Select public key:");
-//        JTextField publicKeyPath = new JTextField(25);
-//        publicKeyPath.setEditable(false);
-//        JButton publicKeyButton = new JButton("Browse");
-//        publicKeyButton.setBackground(new Color(255, 128, 174));
-//        publicKeyButton.setForeground(Color.WHITE);
-//
-//        JLabel algorithmLabel = new JLabel("Choose a signing algorithm:");
-//        ButtonGroup bg = new ButtonGroup();
-//        JRadioButton algorithmDSA = new JRadioButton("DSA");
-//        algorithmDSA.setBackground(new Color(255, 218, 232));
-//        JRadioButton algorithmRSA = new JRadioButton("RSA");
-//        algorithmRSA.setBackground(new Color(255, 218, 232));
-//        bg.add(algorithmDSA);
-//        bg.add(algorithmRSA);
-
         JButton verifyButton = new JButton("Verify");
         verifyButton.setBackground(new Color(255, 128, 174));
         verifyButton.setForeground(Color.WHITE);
@@ -99,35 +84,14 @@ public class Window {
                 File selectedFile = fileChooser.getSelectedFile();
                 signaturePath.setText(selectedFile.getAbsolutePath());
 
-                Verifier verifier = new Verifier( filePath.getText(), signaturePath.getText());
+                Verifier verifier = new Verifier(filePath.getText(), signaturePath.getText());
 
-                String signingUsername = verifier.username;
+                String signingUsername = verifier.readUsernameFromMetadata(Path.of(signaturePath.getText()));
                 signingUser.setText(signingUsername);
             }
         });
 
-//        publicKeyButton.addActionListener(e -> {
-//            JFileChooser fileChooser = new JFileChooser();
-//
-//            // Set the current directory to the project directory
-//            File projectDirectory = new File(System.getProperty("user.dir"));
-//            fileChooser.setCurrentDirectory(projectDirectory);
-//
-//            int returnValue = fileChooser.showOpenDialog(frame);
-//            if (returnValue == JFileChooser.APPROVE_OPTION) {
-//                File selectedFile = fileChooser.getSelectedFile();
-//                publicKeyPath.setText(selectedFile.getAbsolutePath());
-//            }
-//        });
-
         verifyButton.addActionListener(e -> {
-//            String algorithm = "";
-//            if (algorithmDSA.isSelected()) {
-//                algorithm = algorithmDSA.getText();
-//            }
-//            else if (algorithmRSA.isSelected()) {
-//                algorithm = algorithmRSA.getText();
-//            }
             Verifier verifier = new Verifier( filePath.getText(), signaturePath.getText());
             if (verifier.verifySignature()) {
                 JOptionPane.showMessageDialog(frame, "Digital signature is valid", "Verification Result", JOptionPane.INFORMATION_MESSAGE);
@@ -185,40 +149,9 @@ public class Window {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel1.add(signingUser, gbc);
 
-//        // 3 row: public key
-//        gbc.gridx = 0;
-//        gbc.gridy = 2;
-//        gbc.gridwidth = 1;
-//        gbc.anchor = GridBagConstraints.WEST;
-//        panel1.add(publicKeyLabel, gbc);
-//        gbc.gridx = 1;
-//        gbc.gridy = 2;
-//        gbc.gridwidth = 2;
-//        gbc.fill = GridBagConstraints.HORIZONTAL;
-//        panel1.add(publicKeyPath, gbc);
-//        gbc.gridx = 3;
-//        gbc.gridy = 2;
-//        gbc.gridwidth = 1;
-//        gbc.fill = GridBagConstraints.NONE;
-//        panel1.add(publicKeyButton, gbc);
-//
-//        // 4 row: algorithm selection
-//        gbc.gridx = 0;
-//        gbc.gridy = 3;
-//        gbc.anchor = GridBagConstraints.WEST;
-//        panel1.add(algorithmLabel, gbc);
-//        gbc.gridx = 2;
-//        gbc.gridy = 3;
-//        gbc.anchor = GridBagConstraints.WEST;
-//        panel1.add(algorithmDSA, gbc);
-//        gbc.gridx = 2;
-//        gbc.gridy = 3;
-//        gbc.anchor = GridBagConstraints.CENTER;
-//        panel1.add(algorithmRSA, gbc);
-
-        // 5 row: verify button
+        // 4 row: verify button
         gbc.gridx = 0;
-        gbc.gridy = 4;
+        gbc.gridy = 3;
         gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.NONE;
@@ -232,25 +165,10 @@ public class Window {
         fileButton2.setBackground(new Color(255, 128, 174));
         fileButton2.setForeground(Color.WHITE);
 
-//        JLabel algorithmLabel2 = new JLabel("Choose a signing algorithm:");
-//        ButtonGroup bg2 = new ButtonGroup();
-//        JRadioButton algorithmDSA2 = new JRadioButton("DSA");
-//        algorithmDSA2.setBackground(new Color(255, 218, 232));
-//        JRadioButton algorithmRSA2 = new JRadioButton("RSA");
-//        algorithmRSA2.setBackground(new Color(255, 218, 232));
-//        bg2.add(algorithmDSA2);
-//        bg2.add(algorithmRSA2);
-
         JLabel signatureLabel2 = new JLabel("Signature file name:");
         JTextField signaturePath2 = new JTextField(25);
         JLabel publicKeyLabel2 = new JLabel("Public key file name:");
         JTextField publicKeyPath2 = new JTextField(25);
-//        JCheckBox generatePrivateKey = new JCheckBox("Save private key?");
-//        generatePrivateKey.setBackground(new Color(255, 218, 232));
-//        JLabel privateKeyLabel = new JLabel("Private key file name:");
-//        JTextField privateKeyPath = new JTextField(25);
-//        privateKeyLabel.setVisible(false);
-//        privateKeyPath.setVisible(false);
 
         JButton signButton = new JButton("Sign");
         signButton.setBackground(new Color(255, 128, 174));
@@ -270,25 +188,7 @@ public class Window {
             }
         });
 
-//        generatePrivateKey.addActionListener(e -> {
-//            if (generatePrivateKey.isSelected()) {
-//                privateKeyLabel.setVisible(true);
-//                privateKeyPath.setVisible(true);
-//            }
-//            else {
-//                privateKeyLabel.setVisible(false);
-//                privateKeyPath.setVisible(false);
-//            }
-//        });
-
         signButton.addActionListener(e -> {
-//            String algorithm = "";
-//            if (algorithmDSA2.isSelected()) {
-//                algorithm = algorithmDSA2.getText();
-//            }
-//            else if (algorithmRSA2.isSelected()) {
-//                algorithm = algorithmRSA2.getText();
-//            }
             SignatureGenerator signatureGenerator;
             try {
                 signatureGenerator = new SignatureGenerator(filePath2.getText(), signaturePath2.getText());
@@ -321,62 +221,31 @@ public class Window {
         gbc.fill = GridBagConstraints.NONE;
         panel2.add(fileButton2, gbc);
 
-//        // 2 row: algorithm selection
-//        gbc.gridx = 0;
-//        gbc.gridy = 1;
-//        gbc.anchor = GridBagConstraints.WEST;
-//        panel2.add(algorithmLabel2, gbc);
-//        gbc.gridx = 2;
-//        gbc.gridy = 1;
-//        gbc.anchor = GridBagConstraints.WEST;
-//        panel2.add(algorithmDSA2, gbc);
-//        gbc.gridx = 2;
-//        gbc.gridy = 1;
-//        gbc.anchor = GridBagConstraints.CENTER;
-//        panel2.add(algorithmRSA2, gbc);
-
-        // 3 row: signature name
+        // 2 row: signature name
         gbc.gridx = 0;
-        gbc.gridy = 2;
+        gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.WEST;
         panel2.add(signatureLabel2, gbc);
         gbc.gridx = 1;
-        gbc.gridy = 2;
+        gbc.gridy = 1;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel2.add(signaturePath2, gbc);
 
-        // 4 row: public key name
+        // 3 row: public key name
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
         panel2.add(publicKeyLabel2, gbc);
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel2.add(publicKeyPath2, gbc);
 
-//        // 5 row: generate private key checkbox
-//        gbc.gridx = 0;
-//        gbc.gridy = 4;
-//        gbc.anchor = GridBagConstraints.WEST;
-//        panel2.add(generatePrivateKey, gbc);
-//
-//        // 6 row: private key name
-//        gbc.gridx = 0;
-//        gbc.gridy = 5;
-//        gbc.anchor = GridBagConstraints.WEST;
-//        panel2.add(privateKeyLabel, gbc);
-//        gbc.gridx = 1;
-//        gbc.gridy = 5;
-//        gbc.gridwidth = 2;
-//        gbc.fill = GridBagConstraints.HORIZONTAL;
-//        panel2.add(privateKeyPath, gbc);
-
-        // 7 row: sign button
+        // 4 row: sign button
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 3;
         gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.NONE;
