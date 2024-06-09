@@ -73,7 +73,7 @@ public class SignatureGenerator {
             byte[] signature = cipher.sign();
             saveSignatureToFile(signature);
 
-            addAlgorithmToMetadata(Paths.get(path), getHashFunction(algorithm));
+            addAlgorithmToMetadata(Paths.get(path), algorithm);
             addUsernameToMetadata(Paths.get(path),getUsername());
             return true;
 

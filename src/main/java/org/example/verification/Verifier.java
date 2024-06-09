@@ -15,12 +15,14 @@ public class Verifier {
     PublicKey publicKey;
     String signingAlgorithm;
     String filePath;
+    String publicKeysPath;
     byte[] signatureToVerify;
 
     public Verifier(String filePath, String signaturePath, String publicKeysPath) {
         try {
             this.filePath = filePath;
             this.signatureToVerify = readSignatureBytes(signaturePath);
+            this.publicKeysPath=publicKeysPath;
 
             // Get the algorithm from file metadata
             this.signingAlgorithm = readAlgorithmFromMetadata(Paths.get(filePath));
@@ -60,7 +62,13 @@ public class Verifier {
             System.out.println("An exception occurred in creating verifier: " + e.getMessage());
         }
     }
-
+    public String getHashFunction(String algorithm) {
+        return switch (algorithm) {
+            case "DSA" -> "SHA1withDSA";
+            case "RSA" -> "SHA256withRSA";
+            default -> "error";
+        };
+    }
 
     private String readAlgorithmFromMetadata(Path filePath) {
         try {
@@ -114,7 +122,7 @@ public class Verifier {
             if (signingAlgorithm == null || publicKey == null) {
                 return false;
             }
-            Signature signature = Signature.getInstance(signingAlgorithm);
+            Signature signature = Signature.getInstance(getHashFunction(signingAlgorithm));
             signature.initVerify(publicKey);
             FileInputStream dataFileInputStream = new FileInputStream(filePath);
             BufferedInputStream bufferedInput = new BufferedInputStream(dataFileInputStream);
@@ -142,7 +150,7 @@ public class Verifier {
     }
 
     public static void main(String[] args) {
-        Verifier verifier = new Verifier("example.txt", "signature.sig", "publicKeys.json");
+        Verifier verifier = new Verifier("example.txt", "signature.sig","publicKeys.json" );
         boolean result = verifier.verifySignature();
         System.out.println("Signature verification " + (result ? "succeeded" : "failed"));
     }
