@@ -1,11 +1,7 @@
 package org.example.signing;
-
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -103,6 +99,19 @@ public class SignatureGenerator {
         fileKey.write(key);
         fileKey.close();
 
+        // Zapisywanie danych do pliku JSON
+        JSONObject json = new JSONObject();
+        json.put("username", getUsername()); // Pobranie nazwy użytkownika
+        json.put("publicKey", publicKey.toString()); // Tutaj należy użyć rzeczywistego klucza publicznego
+
+        // Zapisywanie danych do pliku JSON
+        try (FileWriter file = new FileWriter("publicKeys.json")) {
+            file.write(json.toString());
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if (privateKeyFileName != null && !privateKeyFileName.isEmpty()) {
             byte[] priv = privateKey.getEncoded();
             FileOutputStream privateFileKey = new FileOutputStream(privateKeyFileName);
@@ -130,6 +139,10 @@ public class SignatureGenerator {
         String content = Files.readString(settingsPath);
         JSONObject json = new JSONObject(content);
         return json.getString("algorithm").trim();
+    }
+
+    private String getUsername() {
+        return System.getProperty("user.name"); // Pobierz nazwę użytkownika z systemu
     }
 
     public static void main(String[] args) {
