@@ -13,6 +13,7 @@ import java.security.spec.X509EncodedKeySpec;
 
 public class Verifier {
     PublicKey publicKey;
+    public String username;
     String signingAlgorithm;
     String filePath;
     String publicKeysPath;
@@ -32,7 +33,7 @@ public class Verifier {
             }
 
             // Get the username from file metadata
-            String username = readUsernameFromMetadata(Paths.get(filePath));
+            this.username = readUsernameFromMetadata(Paths.get(filePath));
             if (username == null) {
                 System.out.println("Could not read username from metadata");
                 return;
@@ -87,7 +88,7 @@ public class Verifier {
         }
     }
 
-    private String readUsernameFromMetadata(Path filePath) {
+    public String readUsernameFromMetadata(Path filePath) {
         try {
             UserDefinedFileAttributeView view = Files.getFileAttributeView(filePath, UserDefinedFileAttributeView.class);
             if (view == null) {

@@ -98,6 +98,11 @@ public class Window {
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 signaturePath.setText(selectedFile.getAbsolutePath());
+
+                Verifier verifier = new Verifier( filePath.getText(), signaturePath.getText());
+
+                String signingUsername = verifier.username;
+                signingUser.setText(signingUsername);
             }
         });
 
@@ -167,6 +172,18 @@ public class Window {
         gbc.gridwidth = 1;
         gbc.fill = GridBagConstraints.NONE;
         panel1.add(signatureButton, gbc);
+
+        // 3 row: signing user
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.gridwidth = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel1.add(signingUserLabel, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel1.add(signingUser, gbc);
 
 //        // 3 row: public key
 //        gbc.gridx = 0;
