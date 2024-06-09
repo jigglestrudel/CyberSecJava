@@ -1,5 +1,7 @@
 package org.example.verification;
 
+import org.json.JSONObject;
+
 import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
@@ -15,8 +17,7 @@ public class Verifier {
     String filePath;
     byte[] signatureToVerify;
 
-    public Verifier(String filePath, String signaturePath, String keyPath) {
-        //verifier initialization using path to files passed by user
+    public Verifier(String filePath, String signaturePath, String publicKeysPath) {
         try {
             this.filePath = filePath;
             this.signatureToVerify = readSignatureBytes(signaturePath);
@@ -28,29 +29,38 @@ public class Verifier {
                 return;
             }
 
-            //key encoding
-            byte[] encodedKey = readEncodedPublicKey(keyPath);
-            if (encodedKey == null) {
+            // Get the username from file metadata
+            String username = readUsernameFromMetadata(Paths.get(filePath));
+            if (username == null) {
+                System.out.println("Could not read username from metadata");
                 return;
             }
-            X509EncodedKeySpec publicKeySpecification = new X509EncodedKeySpec(encodedKey);
-            KeyFactory keyFactory = KeyFactory.getInstance(getAlgorithmBase(this.signingAlgorithm));
-            this.publicKey = keyFactory.generatePublic(publicKeySpecification);
+
+            // Load public keys from JSON file
+            JSONObject publicKeys = readPublicKeys(publicKeysPath);
+            assert publicKeys != null;
+            if (!publicKeys.has(username)) {
+                System.out.println("User not found in public keys file");
+                return;
+            }
+
+            // Get the public key for the specified username
+            String encodedKeyString = publicKeys.optString(username, null);
+            if (encodedKeyString == null) {
+                System.out.println("User not found in public keys file");
+                return;
+            }
+
+            // Decode the public key
+            byte[] encodedKey = java.util.Base64.getDecoder().decode(encodedKeyString);
+            X509EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(encodedKey);
+            KeyFactory keyFactory = KeyFactory.getInstance(signingAlgorithm);
+            this.publicKey = keyFactory.generatePublic(publicKeySpec);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             System.out.println("An exception occurred in creating verifier: " + e.getMessage());
         }
     }
 
-    private String getAlgorithmBase(String algorithm) {
-        if (algorithm.contains("DSA")) {
-            return "DSA";
-        } else if (algorithm.contains("RSA")) {
-            return "RSA";
-        } else {
-            System.out.println("Algorithm not found");
-            return null;
-        }
-    }
 
     private String readAlgorithmFromMetadata(Path filePath) {
         try {
@@ -69,22 +79,24 @@ public class Verifier {
         }
     }
 
-    static private byte[] readEncodedPublicKey(String keyPath) {
-        //reads encrypted public key from file
+    private String readUsernameFromMetadata(Path filePath) {
         try {
-            FileInputStream keyInputStream = new FileInputStream(keyPath);
-            byte[] encodedKey = new byte[keyInputStream.available()];
-            keyInputStream.read(encodedKey);
-            keyInputStream.close();
-            return encodedKey;
+            UserDefinedFileAttributeView view = Files.getFileAttributeView(filePath, UserDefinedFileAttributeView.class);
+            if (view == null) {
+                System.out.println("UserDefinedFileAttributeView is not supported on this file system.");
+                return null;
+            }
+            ByteBuffer buffer = ByteBuffer.allocate(view.size("user.username"));
+            view.read("user.username", buffer);
+            buffer.flip();
+            return StandardCharsets.UTF_8.decode(buffer).toString();
         } catch (IOException e) {
-            System.out.println("An exception occurred in reading encoded public key: " + e.getMessage());
+            System.out.println("An exception occurred in reading username from metadata: " + e.getMessage());
             return null;
         }
     }
 
     static private byte[] readSignatureBytes(String signaturePath) {
-        //reads digital signature of file as bytes
         try {
             FileInputStream signatureFileInputStream = new FileInputStream(signaturePath);
             byte[] signatureToVerify = new byte[signatureFileInputStream.available()];
@@ -98,9 +110,8 @@ public class Verifier {
     }
 
     public boolean verifySignature() {
-        //verifies digital signature of a file by generating new digital signature for file and comparing of keys
         try {
-            if (signingAlgorithm == null) {
+            if (signingAlgorithm == null || publicKey == null) {
                 return false;
             }
             Signature signature = Signature.getInstance(signingAlgorithm);
@@ -120,9 +131,18 @@ public class Verifier {
         }
     }
 
+    private JSONObject readPublicKeys(String publicKeysPath) {
+        try {
+            String content = new String(Files.readAllBytes(Paths.get(publicKeysPath)), StandardCharsets.UTF_8);
+            return new JSONObject(content);
+        } catch (IOException e) {
+            System.out.println("An exception occurred in reading public keys: " + e.getMessage());
+            return null;
+        }
+    }
+
     public static void main(String[] args) {
-        // Example usage
-        Verifier verifier = new Verifier("example.txt", "signature.sig", "public.key");
+        Verifier verifier = new Verifier("example.txt", "signature.sig", "publicKeys.json");
         boolean result = verifier.verifySignature();
         System.out.println("Signature verification " + (result ? "succeeded" : "failed"));
     }

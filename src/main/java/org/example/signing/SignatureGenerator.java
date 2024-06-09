@@ -73,7 +73,8 @@ public class SignatureGenerator {
             byte[] signature = cipher.sign();
             saveSignatureToFile(signature);
 
-            addAlgorithmToMetadata(Paths.get(path), algorithm);
+            addAlgorithmToMetadata(Paths.get(path), getHashFunction(algorithm));
+            addUsernameToMetadata(Paths.get(path),getUsername());
             return true;
 
         } catch (Exception e) {
@@ -112,6 +113,10 @@ public class SignatureGenerator {
     private void addAlgorithmToMetadata(Path filePath, String algorithm) throws IOException {
         UserDefinedFileAttributeView view = Files.getFileAttributeView(filePath, UserDefinedFileAttributeView.class);
         view.write("user.algorithm", ByteBuffer.wrap(algorithm.getBytes(StandardCharsets.UTF_8)));
+    }
+    private void addUsernameToMetadata(Path filePath, String username) throws IOException {
+        UserDefinedFileAttributeView view = Files.getFileAttributeView(filePath, UserDefinedFileAttributeView.class);
+        view.write("user.username", ByteBuffer.wrap(username.getBytes(StandardCharsets.UTF_8)));
     }
 
     private String readAlgorithmFromSettings() throws IOException {

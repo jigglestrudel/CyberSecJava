@@ -270,7 +270,7 @@ public class Window {
             }
             SignatureGenerator signatureGenerator = null;
             try {
-                signatureGenerator = new SignatureGenerator(filePath2.getText(), signaturePath2.getText(), privateKeyPath.getText(), publicKeyPath2.getText());
+                signatureGenerator = new SignatureGenerator(filePath2.getText(), signaturePath2.getText());
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
