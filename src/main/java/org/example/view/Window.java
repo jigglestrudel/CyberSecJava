@@ -167,8 +167,6 @@ public class Window {
 
         JLabel signatureLabel2 = new JLabel("Signature file name:");
         JTextField signaturePath2 = new JTextField(25);
-        JLabel publicKeyLabel2 = new JLabel("Public key file name:");
-        JTextField publicKeyPath2 = new JTextField(25);
 
         JButton signButton = new JButton("Sign");
         signButton.setBackground(new Color(255, 128, 174));
@@ -232,20 +230,9 @@ public class Window {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel2.add(signaturePath2, gbc);
 
-        // 3 row: public key name
-        gbc.gridx = 0;
-        gbc.gridy = 2;
-        gbc.anchor = GridBagConstraints.WEST;
-        panel2.add(publicKeyLabel2, gbc);
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel2.add(publicKeyPath2, gbc);
-
         // 4 row: sign button
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 2;
         gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.NONE;
