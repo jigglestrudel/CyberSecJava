@@ -7,6 +7,7 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 
 // color palette
 // https://lospec.com/palette-list/5-sheep
@@ -267,7 +268,12 @@ public class Window {
             else if (algorithmRSA2.isSelected()) {
                 algorithm = algorithmRSA2.getText();
             }
-            SignatureGenerator signatureGenerator = new SignatureGenerator(filePath2.getText(), algorithm, signaturePath2.getText(), privateKeyPath.getText(), publicKeyPath2.getText());
+            SignatureGenerator signatureGenerator = null;
+            try {
+                signatureGenerator = new SignatureGenerator(filePath2.getText(), signaturePath2.getText(), privateKeyPath.getText(), publicKeyPath2.getText());
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
             if ( signatureGenerator.generateSignature()) {
                 JOptionPane.showMessageDialog(frame, "Digital Signature created successfully", "Signing Result", JOptionPane.INFORMATION_MESSAGE);
             }

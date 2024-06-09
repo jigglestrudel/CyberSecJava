@@ -1,9 +1,16 @@
 package org.example.signing;
 
-import java.io.*;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.security.*;
 
@@ -14,9 +21,9 @@ public class SignatureGenerator {
     private final String signatureFileName;
     private final String privateKeyFileName;
 
-    public SignatureGenerator(String path, String algorithm, String signatureFileName, String privateKeyFileName, String publicKeyFileName) {
+    public SignatureGenerator(String path, String signatureFileName, String privateKeyFileName, String publicKeyFileName) throws IOException {
         this.path = path;
-        this.algorithm = algorithm;
+        this.algorithm = readAlgorithmFromSettings("settings.json");
         this.signatureFileName = signatureFileName;
         this.privateKeyFileName = privateKeyFileName;
         this.publicKeyFileName = publicKeyFileName;
@@ -118,10 +125,21 @@ public class SignatureGenerator {
         System.out.println("Algorithm used: " + algorithm);
     }
 
+    private String readAlgorithmFromSettings(String settingsFileName) throws IOException {
+        Path settingsPath = Paths.get(settingsFileName);
+        String content = Files.readString(settingsPath);
+        JSONObject json = new JSONObject(content);
+        return json.getString("algorithm").trim();
+    }
+
     public static void main(String[] args) {
-        // Example usage
-        SignatureGenerator generator = new SignatureGenerator("example.txt", "RSA", "signature.sig", "private.key", "public.key");
-        boolean result = generator.generateSignature();
-        System.out.println("Signature generation " + (result ? "succeeded" : "failed"));
+        try {
+            // Example usage
+            SignatureGenerator generator = new SignatureGenerator("example.txt", "signature.sig", "private.key", "public.key");
+            boolean result = generator.generateSignature();
+            System.out.println("Signature generation " + (result ? "succeeded" : "failed"));
+        } catch (IOException e) {
+            System.err.println("Failed to read settings file: " + e.getMessage());
+        }
     }
 }
