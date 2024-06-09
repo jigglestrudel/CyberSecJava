@@ -1,10 +1,13 @@
 package org.example.verification;
 
 import java.io.*;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
+import java.nio.file.attribute.UserDefinedFileAttributeView;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-//źródło: https://docs.oracle.com/javase%2Ftutorial%2F/security/apisign/versig.html
 
 public class Verifier {
     PublicKey publicKey;
@@ -12,53 +15,74 @@ public class Verifier {
     String filePath;
     byte[] signatureToVerify;
 
-    public Verifier(String filePath, String signaturePath, String keyPath, String algorithm) {
+    public Verifier(String filePath, String signaturePath, String keyPath) {
         //verifier initialization using path to files passed by user
         try {
-            this.signingAlgorithm = getAlgorithmName(algorithm);
             this.filePath = filePath;
             this.signatureToVerify = readSignatureBytes(signaturePath);
+
+            // Get the algorithm from file metadata
+            this.signingAlgorithm = readAlgorithmFromMetadata(Paths.get(filePath));
+            if (this.signingAlgorithm == null) {
+                System.out.println("Could not read algorithm from metadata");
+                return;
+            }
+
             //key encoding
             byte[] encodedKey = readEncodedPublicKey(keyPath);
             if (encodedKey == null) {
                 return;
             }
             X509EncodedKeySpec publicKeySpecification = new X509EncodedKeySpec(encodedKey);
-            KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
+            KeyFactory keyFactory = KeyFactory.getInstance(getAlgorithmBase(this.signingAlgorithm));
             this.publicKey = keyFactory.generatePublic(publicKeySpecification);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            System.out.println("An exception occurred in creating verifier: " + e.getMessage());
         }
-        catch (NoSuchAlgorithmException |InvalidKeySpecException e) {
-            System.out.println("An exception occured in creating verifier");
-        }
-
     }
-    static private String getAlgorithmName(String algorithm) {
-        //gets name of algorithm used to sign file
-        if (algorithm.equals("DSA")) {
-            return "SHA1withDSA";
-        }
-        else if (algorithm.equals("RSA")) {
-            return "SHA256withRSA";
-        }
-        else {
-            System.out.println("Algotithm not found");
+
+    private String getAlgorithmBase(String algorithm) {
+        if (algorithm.contains("DSA")) {
+            return "DSA";
+        } else if (algorithm.contains("RSA")) {
+            return "RSA";
+        } else {
+            System.out.println("Algorithm not found");
             return null;
         }
     }
-    static private byte[] readEncodedPublicKey(String key_path) {
+
+    private String readAlgorithmFromMetadata(Path filePath) {
+        try {
+            UserDefinedFileAttributeView view = Files.getFileAttributeView(filePath, UserDefinedFileAttributeView.class);
+            if (view == null) {
+                System.out.println("UserDefinedFileAttributeView is not supported on this file system.");
+                return null;
+            }
+            ByteBuffer buffer = ByteBuffer.allocate(view.size("user.algorithm"));
+            view.read("user.algorithm", buffer);
+            buffer.flip();
+            return StandardCharsets.UTF_8.decode(buffer).toString();
+        } catch (IOException e) {
+            System.out.println("An exception occurred in reading algorithm from metadata: " + e.getMessage());
+            return null;
+        }
+    }
+
+    static private byte[] readEncodedPublicKey(String keyPath) {
         //reads encrypted public key from file
         try {
-            FileInputStream keyInputStream = new FileInputStream(key_path);
+            FileInputStream keyInputStream = new FileInputStream(keyPath);
             byte[] encodedKey = new byte[keyInputStream.available()];
             keyInputStream.read(encodedKey);
             keyInputStream.close();
             return encodedKey;
-        }
-        catch (IOException e) {
-            System.out.println("An exception occured in reading encoded public key");
+        } catch (IOException e) {
+            System.out.println("An exception occurred in reading encoded public key: " + e.getMessage());
             return null;
         }
     }
+
     static private byte[] readSignatureBytes(String signaturePath) {
         //reads digital signature of file as bytes
         try {
@@ -67,12 +91,12 @@ public class Verifier {
             signatureFileInputStream.read(signatureToVerify);
             signatureFileInputStream.close();
             return signatureToVerify;
-        }
-        catch (IOException e) {
-            System.out.println("An exception occured in reading signature bytes");
+        } catch (IOException e) {
+            System.out.println("An exception occurred in reading signature bytes: " + e.getMessage());
             return null;
         }
     }
+
     public boolean verifySignature() {
         //verifies digital signature of a file by generating new digital signature for file and comparing of keys
         try {
@@ -85,21 +109,21 @@ public class Verifier {
             BufferedInputStream bufferedInput = new BufferedInputStream(dataFileInputStream);
             byte[] buffer = new byte[1024];
             int len;
-            while (bufferedInput.available() != 0) {
-                len = bufferedInput.read(buffer);
+            while ((len = bufferedInput.read(buffer)) != -1) {
                 signature.update(buffer, 0, len);
             }
             bufferedInput.close();
-            if (signatureToVerify != null) {
-                return signature.verify(signatureToVerify);
-            }
-            else {
-                return false;
-            }
-        }
-        catch (NoSuchAlgorithmException | InvalidKeyException | IOException | SignatureException e) {
-            System.out.println("An exception occured in veryfing signature");
+            return signatureToVerify != null && signature.verify(signatureToVerify);
+        } catch (NoSuchAlgorithmException | InvalidKeyException | IOException | SignatureException e) {
+            System.out.println("An exception occurred in verifying signature: " + e.getMessage());
             return false;
         }
+    }
+
+    public static void main(String[] args) {
+        // Example usage
+        Verifier verifier = new Verifier("example.txt", "signature.sig", "public.key");
+        boolean result = verifier.verifySignature();
+        System.out.println("Signature verification " + (result ? "succeeded" : "failed"));
     }
 }

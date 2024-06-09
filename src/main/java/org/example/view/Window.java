@@ -118,7 +118,7 @@ public class Window {
             else if (algorithmRSA.isSelected()) {
                 algorithm = algorithmRSA.getText();
             }
-            Verifier verifier = new Verifier( filePath.getText(), signaturePath.getText(), publicKeyPath.getText(), algorithm);
+            Verifier verifier = new Verifier( filePath.getText(), signaturePath.getText(), publicKeyPath.getText());
             if (verifier.verifySignature()) {
                 JOptionPane.showMessageDialog(frame, "Digital signature is valid", "Verification Result", JOptionPane.INFORMATION_MESSAGE);
             }
