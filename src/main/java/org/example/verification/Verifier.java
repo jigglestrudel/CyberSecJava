@@ -18,11 +18,11 @@ public class Verifier {
     String publicKeysPath;
     byte[] signatureToVerify;
 
-    public Verifier(String filePath, String signaturePath, String publicKeysPath) {
+    public Verifier(String filePath, String signaturePath) {
         try {
             this.filePath = filePath;
             this.signatureToVerify = readSignatureBytes(signaturePath);
-            this.publicKeysPath=publicKeysPath;
+            publicKeysPath = "publicKeys.json";
 
             // Get the algorithm from file metadata
             this.signingAlgorithm = readAlgorithmFromMetadata(Paths.get(filePath));
@@ -150,7 +150,7 @@ public class Verifier {
     }
 
     public static void main(String[] args) {
-        Verifier verifier = new Verifier("example.txt", "signature.sig","publicKeys.json" );
+        Verifier verifier = new Verifier("example.txt", "signature.sig" );
         boolean result = verifier.verifySignature();
         System.out.println("Signature verification " + (result ? "succeeded" : "failed"));
     }
