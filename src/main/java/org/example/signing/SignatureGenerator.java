@@ -1,11 +1,7 @@
 package org.example.signing;
-
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -20,13 +16,10 @@ public class SignatureGenerator {
     private final String publicKeyFileName;
     private final String signatureFileName;
     private final String privateKeyFileName;
-    private final String username;
 
     public SignatureGenerator(String path, String signatureFileName, String privateKeyFileName, String publicKeyFileName) throws IOException {
-        JSONObject settings = readSettings("settings.json");
         this.path = path;
-        this.algorithm = settings.getString("algorithm").trim();
-        this.username = settings.getString("username").trim();
+        this.algorithm = readAlgorithmFromSettings("settings.json");
         this.signatureFileName = signatureFileName;
         this.privateKeyFileName = privateKeyFileName;
         this.publicKeyFileName = publicKeyFileName;
@@ -84,14 +77,8 @@ public class SignatureGenerator {
             // Add the encryption algorithm name to the file's metadata
             addAlgorithmToMetadata(Paths.get(path), algorithm);
 
-            // Add the username to the file's metadata
-            addUsernameToMetadata(Paths.get(path), username);
-
             // Read and print the algorithm from metadata
             readAlgorithmFromMetadata(Paths.get(path));
-
-            // Read and print the username from metadata
-            readUsernameFromMetadata(Paths.get(path));
 
             return true;
 
@@ -112,6 +99,19 @@ public class SignatureGenerator {
         fileKey.write(key);
         fileKey.close();
 
+        // Zapisywanie danych do pliku JSON
+        JSONObject json = new JSONObject();
+        json.put("username", getUsername()); // Pobranie nazwy użytkownika
+        json.put("publicKey", publicKey.toString()); // Tutaj należy użyć rzeczywistego klucza publicznego
+
+        // Zapisywanie danych do pliku JSON
+        try (FileWriter file = new FileWriter("publicKeys.json")) {
+            file.write(json.toString());
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         if (privateKeyFileName != null && !privateKeyFileName.isEmpty()) {
             byte[] priv = privateKey.getEncoded();
             FileOutputStream privateFileKey = new FileOutputStream(privateKeyFileName);
@@ -125,11 +125,6 @@ public class SignatureGenerator {
         view.write("user.algorithm", ByteBuffer.wrap(algorithm.getBytes(StandardCharsets.UTF_8)));
     }
 
-    private void addUsernameToMetadata(Path filePath, String username) throws IOException {
-        UserDefinedFileAttributeView view = Files.getFileAttributeView(filePath, UserDefinedFileAttributeView.class);
-        view.write("user.username", ByteBuffer.wrap(username.getBytes(StandardCharsets.UTF_8)));
-    }
-
     private void readAlgorithmFromMetadata(Path filePath) throws IOException {
         UserDefinedFileAttributeView view = Files.getFileAttributeView(filePath, UserDefinedFileAttributeView.class);
         ByteBuffer buffer = ByteBuffer.allocate(view.size("user.algorithm"));
@@ -139,18 +134,25 @@ public class SignatureGenerator {
         System.out.println("Algorithm used: " + algorithm);
     }
 
-    private void readUsernameFromMetadata(Path filePath) throws IOException {
-        UserDefinedFileAttributeView view = Files.getFileAttributeView(filePath, UserDefinedFileAttributeView.class);
-        ByteBuffer buffer = ByteBuffer.allocate(view.size("user.username"));
-        view.read("user.username", buffer);
-        buffer.flip();
-        String username = StandardCharsets.UTF_8.decode(buffer).toString();
-        System.out.println("Username: " + username);
-    }
-
-    private JSONObject readSettings(String settingsFileName) throws IOException {
+    private String readAlgorithmFromSettings(String settingsFileName) throws IOException {
         Path settingsPath = Paths.get(settingsFileName);
         String content = Files.readString(settingsPath);
-        return new JSONObject(content);
+        JSONObject json = new JSONObject(content);
+        return json.getString("algorithm").trim();
+    }
+
+    private String getUsername() {
+        return System.getProperty("user.name"); // Pobierz nazwę użytkownika z systemu
+    }
+
+    public static void main(String[] args) {
+        try {
+            // Example usage
+            SignatureGenerator generator = new SignatureGenerator("example.txt", "signature.sig", "private.key", "public.key");
+            boolean result = generator.generateSignature();
+            System.out.println("Signature generation " + (result ? "succeeded" : "failed"));
+        } catch (IOException e) {
+            System.err.println("Failed to read settings file: " + e.getMessage());
+        }
     }
 }
