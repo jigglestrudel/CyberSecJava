@@ -78,7 +78,6 @@ public class Verifier {
                 System.out.println("UserDefinedFileAttributeView is not supported on this file system.");
                 return null;
             }
-            System.out.println(view.list());
             ByteBuffer buffer = ByteBuffer.allocate(view.size("user.algorithm"));
             view.read("user.algorithm", buffer);
             buffer.flip();
