@@ -8,7 +8,6 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 
 // color palette
 // https://lospec.com/palette-list/5-sheep
@@ -84,15 +83,15 @@ public class Window {
                 File selectedFile = fileChooser.getSelectedFile();
                 signaturePath.setText(selectedFile.getAbsolutePath());
 
-                Verifier verifier = new Verifier(filePath.getText(), signaturePath.getText());
+                Verifier verifier = new Verifier( filePath.getText(), signaturePath.getText());
 
-                String signingUsername = verifier.readUsernameFromMetadata(Path.of(signaturePath.getText()));
+                String signingUsername = verifier.username;
                 signingUser.setText(signingUsername);
             }
         });
 
         verifyButton.addActionListener(e -> {
-            Verifier verifier = new Verifier(filePath.getText(), signaturePath.getText());
+            Verifier verifier = new Verifier( filePath.getText(), signaturePath.getText());
             if (verifier.verifySignature()) {
                 JOptionPane.showMessageDialog(frame, "Digital signature is valid", "Verification Result", JOptionPane.INFORMATION_MESSAGE);
             }
@@ -167,6 +166,8 @@ public class Window {
 
         JLabel signatureLabel2 = new JLabel("Signature file name:");
         JTextField signaturePath2 = new JTextField(25);
+        JLabel publicKeyLabel2 = new JLabel("Public key file name:");
+        JTextField publicKeyPath2 = new JTextField(25);
 
         JButton signButton = new JButton("Sign");
         signButton.setBackground(new Color(255, 128, 174));
@@ -230,9 +231,20 @@ public class Window {
         gbc.fill = GridBagConstraints.HORIZONTAL;
         panel2.add(signaturePath2, gbc);
 
-        // 4 row: sign button
+        // 3 row: public key name
         gbc.gridx = 0;
         gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel2.add(publicKeyLabel2, gbc);
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel2.add(publicKeyPath2, gbc);
+
+        // 4 row: sign button
+        gbc.gridx = 0;
+        gbc.gridy = 3;
         gbc.gridwidth = 4;
         gbc.anchor = GridBagConstraints.CENTER;
         gbc.fill = GridBagConstraints.NONE;
