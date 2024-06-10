@@ -26,14 +26,14 @@ public class Verifier {
             publicKeysPath = "publicKeys.json";
 
             // Get the algorithm from file metadata
-            this.signingAlgorithm = readAlgorithmFromMetadata(Paths.get(signaturePath));
+            this.signingAlgorithm = readAlgorithmFromMetadata(Paths.get(filePath));
             if (this.signingAlgorithm == null) {
                 System.out.println("Could not read algorithm from metadata");
                 return;
             }
 
             // Get the username from file metadata
-            this.username = readUsernameFromMetadata(Paths.get(signaturePath));
+            this.username = readUsernameFromMetadata(Paths.get(filePath));
             if (username == null) {
                 System.out.println("Could not read username from metadata");
                 return;
