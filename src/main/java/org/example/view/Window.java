@@ -236,12 +236,12 @@ public class Window {
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
-        panel2.add(publicKeyLabel2, gbc);
+        //panel2.add(publicKeyLabel2, gbc);
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.gridwidth = 2;
         gbc.fill = GridBagConstraints.HORIZONTAL;
-        panel2.add(publicKeyPath2, gbc);
+        //panel2.add(publicKeyPath2, gbc);
 
         // 4 row: sign button
         gbc.gridx = 0;
