@@ -92,7 +92,7 @@ public class Window {
         });
 
         verifyButton.addActionListener(e -> {
-            Verifier verifier = new Verifier( filePath.getText(), signaturePath.getText());
+            Verifier verifier = new Verifier(filePath.getText(), signaturePath.getText());
             if (verifier.verifySignature()) {
                 JOptionPane.showMessageDialog(frame, "Digital signature is valid", "Verification Result", JOptionPane.INFORMATION_MESSAGE);
             }
