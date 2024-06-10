@@ -39,9 +39,8 @@ public class SignatureGenerator {
 
             // Read keys from JSON file if they exist
             JSONObject settings = readOrInitializeJson(Paths.get("settings.json"));
-            if (settings.has(getUsername())) {
-                JSONObject userKeys = settings.getJSONObject(getUsername());
-                privateKey = loadPrivateKey(userKeys.getString("privateKey"));
+            if (settings.has("username") && settings.getString("username").equals(getUsername())) {
+                privateKey = loadPrivateKey(settings.getString("privateKey"));
             } else {
                 KeyPairGenerator keyGenerated = KeyPairGenerator.getInstance(algorithm);
                 SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
